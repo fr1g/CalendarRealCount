@@ -1,3 +1,7 @@
+# by feiron iguista @ corona studio
+# https://corona.studio
+
+
 at 18:00 in world "world":
     make console execute command "/newdzen"
     set {dhc} to true
