@@ -1,3 +1,7 @@
+# by Feiron Iguista of Corona Studio
+# https://corona.studio
+# ver B
+
 at 5:57 pm in world "world":
     wait for 0.3 seconds
     set {calendar.dhc} to true
