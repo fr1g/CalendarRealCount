@@ -1,105 +1,232 @@
 # by Feiron Iguista of Corona Studio
 # https://corona.studio
-# ver B
+# ver C. I suggest you to jump the date in this version, althought it's not necessary.
+# and later i maybe add a function to controll the moon phase, then you should install SkQuery as a depency.
+# But whatever, this will be optional. Only if you want to use, install SkQuery Add-on, and delete sharps(#) before the optional code
+# and then reload the script.
+# BTW: If you are a Chinese-speaker, welcome to https://skript.cn ! This is a New Chinese Skript Forum!
 
-at 5:57 pm in world "world":
-    wait for 0.3 seconds
-    set {calendar.dhc} to true
+at 6am in "world":
+    message "Loading Calendar Running 3..." to the console
+    make console execute command "/crc.morn()"
 
-on command "/dhcnull":
-    sender has permission "admin":
+at 6pm in "world":
+    make console execute command "/crc.dawn()"
+
+on command "/crc.dawn()":
+    sender is console:
         cancel event
-        message "%{calendar.dhc}%"
-        set {calendar.dhc} to null
-        message "%{calendar.dhc}%"
-        #reset the day-pass state, useless factually
+        {calendar.dhc} is true:
+            set {calendar.dhc} to false
+            make console execute command "/crc.main()"
+            set {calendar.bcastedcal} to false
+            set {calendar.nsdw2} to true
+            message "日历流程2完成" to the console
+
+on command "/crc.morn()":
+    if sender is console:
+        cancel event
+        if {calendar.bcastedcal} is not null:
+            message "3.1" to the console
+            broadcast "早上好哇！今天是<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{calendar.CalendD}%<yellow>日<r>"
+            message "日历流程3完成" to the console
+            set {calendar.bcastedcal} to null
+            set {calendar.dhc} to true
+            message "日历流程1完成" to the console        
+            if {calendar.ndsw2} is true:
+                if {calendar.CalendM} is 1:
+                    if {calendar.CalendD} is 1:
+                        broadcast "新年到咯!"
+                        set {calendar.ndsw} to true
+                        set {calendar.nsdw2} to false
+
+#u can also use a satellite which made by command block & daylight-detector and stay in a ever-loaded chunk to report the date to prevent "at time" event dead.
+on command "/jukebox.km am":
+    sender is command block:
+        cancel event
+        time in "world" is more than 6am:
+            time in "world" is less than 6pm:
+                weather in "world" is sunny:
+                    broadcast "<gold>空间卫星<gray>：<r>早哦！今天是<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{calendar.CalendD}%<yellow>日<r>"
+
+on command "/jukebox.km pm":
+    sender is command block:
+        cancel event
+        time in "world" is more than 6pm:
+            weather in "world" is sunny:
+                broadcast "<gold>空间卫星<gray>：<r>晚好！上次播报的日期是<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{calendar.CalendD}%<yellow>日<r>%nl%<gray>      另外，如果当前时间晚于18:00, 则这是明天的日期. 早点睡觉哦!"
+
+
+#uezer.sk is a weather reporter
+on command "/bcstw":
+    sender is console:
+        set {crc.querd} to null
+        set {crc.querd} to {crc.querd} parsed as number
+        set {crc.querd} to 0
+        set {crc.querd} to {crc.querd} parsed as number
+        set {crc.querd} to {calendar.CalendD}
+        if time in "world" is more than 6pm:
+            remove 1 from {crc.querd}
+
+on weather change to rainy:
+    event-world is "world":
+        wait 3 ticks
+        set {uezer.uezer} to "3"
+        make console execute command "/bcstw ren"
+        chance of 40%:
+            wait for 1 seconds
+            set weather to thunder
+            make console execute command "/bcstw sto"
+            set {uezer.uezer} to "1"
+        chance of 5%:
+            wait for 5 seconds
+            set weather to clear
+            make console execute command "/bcstw wha"
+            set {uezer.uezer} to "0"
         
+on weather change to sunny:
+    set {uezer.uezer} to "0"
+    make console execute command "/bcstw sun"
 
-at 6:01 pm in world "world":
-    wait for 0.3 seconds
-    {calendar.dhc} is true:
-        set {calendar.dhc} to false
-        wait for 0.5 seconds
-        make console execute command "/crc.main()"
-        set {calendar.bcastedcal} to false
-        #new day add
+on command "/bcstw sun":
+    sender is console:
+        cancel event
+        wait 5 ticks
+        broadcast "<gold>空间卫星<gray>：%time in "world"%, %{calendar.CalendY}%  %{calendar.CalendM}%. %{crc.querd}%_<lime>天晴咯！"
 
+on command "/bcstw sto":
+    sender is console:
+        cancel event
+        wait 5 ticks
+        broadcast "<gold>空间卫星<gray>：%time in "world"%, %{calendar.CalendY}%  %{calendar.CalendM}%. %{crc.querd}%_<aqua>下 大 啦 !"
+
+on command "/bcstw ren":
+    sender is console:
+        cancel event
+        wait 5 ticks
+        broadcast "<gold>空间卫星<gray>：%time in "world"%, %{calendar.CalendY}%  %{calendar.CalendM}%. %{crc.querd}%_<light aqua>下雨咯！"
+
+on command "/bcstw wha":
+    sender is console:
+        cancel event
+        wait 5 ticks
+        broadcast "<gold>空间卫星<gray>：%time in "world"%, %{calendar.CalendY}%  %{calendar.CalendM}%. %{crc.querd}%_<gold>就这？"
+#done
+#kogdasc.sk is a tool to show a total message. perhaps something in it is unecessary, i cannot sure...
+on command "/kogdasc": 
+    cancel event
+    message "<light red>0<r> <gray>正在准备信息..."
+    set {ksc._%sender%leT} to time in world "world"
+    if {uezer.uezer} is not null:
+        if {uezer.uezer} is "0":
+            set {ksc._%sender%Cur} to "晴"
+        if {uezer.uezer} is "1":
+            set {ksc._%sender%Cur} to "雷"
+        if {uezer.uezer} is "3":
+            set {ksc._%sender%Cur} to "雨"
+    set {calendar._sejcas} to now
+    set {calendar._outsej} to {calendar._sejcas} formatted as " yyyy年 M月 dd日  HH:mm:ss "
+    wait for 5 ticks
+    message ""
+    set {ksc.crc.querd%player%} to null
+    set {ksc.crc.querd%player%} to {ksc.crc.querd%player%} parsed as number
+    set {ksc.crc.querd%player%} to 0
+    set {ksc.crc.querd%player%} to {ksc.crc.querd%player%} parsed as number
+    set {ksc.crc.querd%player%} to {calendar.CalendD}
+    if time in "world" is more than 6pm:
+        remove 1 from {ksc.crc.querd%player%}
+        wait for 3 ticks
+        message "<light red>0<r> <yellow>开始显示kogdasc请求结果： <r>%sender's name% <r>+ %sender's displayname%"
+        message "<light red>0<r> <gray>MCDate: "
+        message "<light red>0<r> ESS整合的时间： <gold>%{ksc._%sender%leT}%"
+        message "<light red>0<r> CRC报告的日期：<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{ksc.crc.querd%player%}%<yellow>日"
+        message "<light red>0<r> <gray>SrvDate:"
+        message "<light red>0<r> 服务器时间：%{calendar._outsej}% (UTC+8)"
+        message "<light red>0<r> <gray>Otrs:"
+        message "<light red>0<r> 天气： <yellow>%{ksc._%sender%Cur}%"
+        message "<light red>0<r> <gray>打印完成..."
+        set {ksc.crc.querd%player%} to null
+        
+    else:
+        wait for 3 ticks
+        message "<light red>0<r> <yellow>开始显示kogdasc请求结果： <r>%sender's name% <r>+ %sender's displayname%"
+        message "<light red>0<r> <gray>MCDate: "
+        message "<light red>0<r> ESS整合的时间： <gold>%{ksc._%sender%leT}%"
+        message "<light red>0<r> CRC报告的日期：<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{ksc.crc.querd%player%}%<yellow>日"
+        message "<light red>0<r> <gray>SrvDate:"
+        message "<light red>0<r> 服务器时间：%{calendar._outsej}% (UTC+8)"
+        message "<light red>0<r> <gray>Otrs:"
+        message "<light red>0<r> 天气： <yellow>%{ksc._%sender%Cur}%"
+        message "<light red>0<r> <gray>打印完成..."
+        set {ksc.crc.querd%player%} to null
+#done
+
+on command "/queryCalendar":
+    if sender has permission "admin":
+        cancel event
+        message "%{calendar.bcastedcal}%"
+
+on bed enter:
+    set {calendar.bcastedcal} to false
 
 on command "/kogda":
     cancel event
-    message "上次播报的日期是<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{calendar.CalendD}%<yellow>日<r>"#announce date before the time can sleep
-    message "<gray>如果当前时间晚于18:00, 则这是明天的日期. 早点睡觉哦!"#tips to sleep early
-
-at 6am in world "world":
-    if {calendar.bcastedcal} is false:
-        broadcast "早上好哇！今天是<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{calendar.CalendD}%<yellow>日<r>" #Morning Date announce
-        set {calendar.bcastedcal} to true
-
+    if time in "world" is more than 6pm:
+        set {_crc.querd.%player%} to null
+        set {_crc.querd.%player%} to {_crc.querd.%player%} parsed as number
+        set {_crc.querd.%player%} to 0
+        set {_crc.querd.%player%} to {_crc.querd.%player%} parsed as number
+        set {_crc.querd.%player%} to {calendar.CalendD}
+        remove 1 from {_crc.querd.%player%}
+        message "今天的日期是<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{calendar.CalendD}%<yellow>日<r>."
+    else:
+        message "今天的日期是<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{calendar.CalendD}%<yellow>日<r>."
 
 on command "/newdzen":
     if sender is console:#totally same
         cancel event
-        message "In console, executa crc.main() izrlymr..." #In console, please use command "crc.main()" to add a day manually.
+        message "In console, executa crc.main() izrlymr..."
     if sender is a player:#totally same
         player has permission "admin":
             cancel event
-            make console execute command "/crc.main()" #how you try add a day in game
-
-
-at 06:01 in world "world":
-    if {calendar.ndsw2} is true:
-        if {calendar.CalendM} is 1:
-            if {calendar.CalendD} is 1:
-                broadcast "新年到咯!"
-                set {calendar.ndsw} to true
-                set {calendar.nsdw2} to false #New year announcement
-
-at 07:00 in world "world":
-    if {calendar.ndsw} is true:
-        add 1 to {calendar.CountAllDays}
-        set {calendar.ndsw} to false
-        set {calendar.ndsw2} to true
-
-on command "/chktotdays":
-    message "有史以来度过的天数: <gold>%{calendar.CountAllDays}%"#Actually useless but count days past. The real data can be viewed in f3 infos so this command is useless XD
+            make console execute command "/crc.main()"
 
 on command "/crc.main()":
     cancel event
     sender is console:
         add 1 to {calendar.CalendD}
 
-#跨年 Year-pass codes start
+#跨年
         if {calendar.CalendM} is 12:
             if {calendar.CalendD} is 32:
                 add 1 to {calendar.CalendY}
-                #追记1年 year++
+                #追记1年
                 set {calendar.CalendD} to null
                 set {calendar.CalendD} to {calendar.CalendD} parsed as number
                 set {calendar.CalendD} to 1
-                #重制到1日 Day to 1st
+                #重制到1日
                 set {calendar.CalendM} to null
                 set {calendar.CalendM} to {calendar.CalendM} parsed as number
                 set {calendar.CalendM} to 1
-                
-                #重制到1月 Month to Jan
-#跨年结束 Year-pass codes end.
-        if {calendar.CalendM} is 1 or 3 or 5 or 7 or 8 or 10:#一三五七八十腊(腊月在上面跨年判断) Months with 31 days
+                #重制到1月 back to Jan 1 and the year ++
+#跨年结束
+        if {calendar.CalendM} is 1 or 3 or 5 or 7 or 8 or 10:#一三五七八十腊(腊月在上面跨年判断) Jan Mar May Jul Aug Oct Dec
             if {calendar.CalendD} is 32:
-                add 1 to {calendar.CalendM}#加一
+                add 1 to {calendar.CalendM}#加一 CM++
                 set {calendar.CalendD} to null
                 set {calendar.CalendD} to {calendar.CalendD} parsed as number
-                set {calendar.CalendD} to 1 #重设
+                set {calendar.CalendD} to 1 #重设 Reset
 
 
-        if {calendar.CalendM} is 4 or 6 or 9 or 11:# ms with 30 days
+        if {calendar.CalendM} is 4 or 6 or 9 or 11:
             if {calendar.CalendD} is 31:
                 add 1 to {calendar.CalendM}
                 set {calendar.CalendD} to null
                 set {calendar.CalendD} to {calendar.CalendD} parsed as number
-                set {calendar.CalendD} to 1 #重设
+                set {calendar.CalendD} to 1 #重设Reset
 
-        if {calendar.CalendM} is 2:#Special Feb.
-            if ({calendar.CalendY} / 4) is integer:
+        if {calendar.CalendM} is 2:
+            if ({calendar.CalendY} * 0.25) is integer:
                 if {calendar.CalendD} is 30:
                     add 1 to {calendar.CalendM}
                     set {calendar.CalendD} to null
@@ -114,19 +241,8 @@ on command "/crc.main()":
 
         wait for 1 tick#might not necess
         broadcast "新的一天即将到来哩!明天的日期是:<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{calendar.CalendD}%<yellow>日<r>"
-        # Announce the nex-day date.
 
-
-
-
-
-
-
-
-on command "/chkSrvN":
-    message "%server%"
-
-on command "/resetCan":#重设到0年1月1日 RESET TO 0yr Jan 1st
+on command "/crc.reset()":#重设到0年1月1日 back to 0 jan 1st
     player has permission "admin":
         cancel event
         broadcast "MAAAAAGIIIIIC REEEEESEEEEET AD0 1 1"
@@ -141,18 +257,12 @@ on command "/resetCan":#重设到0年1月1日 RESET TO 0yr Jan 1st
         set {calendar.CalendM} to 1
         set {calendar.CalendD} to 1
 
-
-
-on command "/jtoDate":
+on command "/crc.jump()":
     sender is a player:
         sender has permission "admin":
             cancel event
             set metadata value "crc.settoy" of sender to true
-            message "toYear:"#by using this command to jump the date, please follow 3 steps:
-                               # FIRST send the year to go
-                               # SECOND send the month to go WITH NO "0"(zero) BEFORE ANY SINGLE NUMBER
-                               # third send the day to go
-                               # AND! DO NOT SEND A NUMBER OVERCOUNT! (like -1 13 32) I DON'T KNOW WHAT WILL HAPPEN!
+            message "toYear:"
 
 on chat:
     sender is a player:
@@ -174,10 +284,17 @@ on chat:
                 set {crc.tod.%sender%} to message
                 set metadata value "crc.set" of sender to true
                 set metadata value "crc.settod" of sender to false
-                message "use jtoDateC to combine"
-                message "<cmd:/jtoDateC><lime>【GO】"
+                message "use crc.jump(arg) to combine:"
+                message "<cmd:/crc.jump(arg)><lime>【GO】"#by using this command to jump the date, please follow 3 steps:
+                               # FIRST send the year to go
+                               # SECOND send the month to go WITH NO "0"(zero) BEFORE ANY SINGLE NUMBER
+                               # third send the day to go
+                               # AND! DO NOT SEND A NUMBER OVERCOUNT! (like -1 13 32) I DON'T KNOW WHAT WILL HAPPEN!
+                               # ELSE! PLEASE SWITCH YOUR DATE AFTER UPDATE WHICH NOTICED YOU TO DO SO!!!
+                               # !!!SO!!! REMEMBER THE CURRENT DATE BEFORE YOU UPDATE THE SCRIPT!
 
-on command "/jtoDateC":
+
+on command "/crc.jump(arg)":
     sender is a player:
         sender has permission "admin":
             cancel event
@@ -192,15 +309,8 @@ on command "/jtoDateC":
                 set {calendar.CalendM} to {crc.tom.%sender%}
                 set {calendar.CalendD} to {crc.tod.%sender%}
                 wait 3 ticks
-                broadcast "日期调整到了:<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{calendar.CalendD}%<yellow>日<r>"#announce the changed date
+                broadcast "日期调整到了:<gold> %{calendar.CalendY}%<yellow>年<gold>%{calendar.CalendM}%<yellow>月<gold>%{calendar.CalendD}%<yellow>日<r>"
                 
-
             else:
                 message "noData"
-
-
-
-
-
-
  
