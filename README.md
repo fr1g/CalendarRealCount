@@ -14,7 +14,8 @@ After you updated to Ver B:
 
 reload the script
 <br>
-execute command "/jtoDate"
+execute command "/crc.jump()" <br>
+(^ this command, in version B, it was "/jtoDate". Now it changed)
 <br>
 send 2022 in chat
 <br>
